@@ -1,0 +1,99 @@
+
+
+first create keystore with keytool
+
+keytool -genkeypair \
+  -alias keycloak \
+  -keyalg RSA \
+  -keystore keycloak.jks \
+  -storepass password \
+  -keypass password \
+  -validity 3650 \
+  -dname "CN=localhost, OU=Dev, O=MyCompany, L=City, ST=State, C=US"
+
+
+
+  now check the keystore file location with below command
+  ls /Users/deadlock/keycloak
+
+  you should see the below things
+  keycloak.jks
+
+  if not , move it there
+  mv ~/keycloak.jks /Users/deadlock/keycloak/
+
+  Now check inside the docker
+  docker run --rm -v /Users/deadlock/keycloak:/opt/keycloak/conf alpine ls /opt/keycloak/conf
+
+
+  The below are keycloak with admin without db
+
+
+  now start keycloak with https
+  docker run -p 8443:8443 \
+    -v /Users/deadlock/keycloak:/opt/keycloak/conf \
+    -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+    -e KC_BOOTSTRAP_ADMIN_PASSWORD=YourStrongPassword123 \
+    quay.io/keycloak/keycloak:26.5.3 \
+    start-dev \
+    --https-key-store-file=/opt/keycloak/conf/keycloak.jks \
+    --https-key-store-password=password \
+    --hostname-strict=false
+     --hostname=192.168.1.5
+
+
+
+
+  docker run -p 8443:8443 \
+    -v /Users/deadlock/keycloak:/opt/keycloak/conf \
+    -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+    -e KC_BOOTSTRAP_ADMIN_PASSWORD=YourStrongPassword123 \
+    quay.io/keycloak/keycloak:26.5.3 \
+    start \
+    --https-key-store-file=/opt/keycloak/conf/keycloak.jks \
+    --https-key-store-password=password \
+    --hostname=192.168.1.5
+
+
+
+
+
+    as we have created admin in keycloak
+
+    after you get on browser
+    https://localhost:8443
+
+    Your connection is not private Attackers might be trying to steal your information from
+    localhost (for example, passwords, messages or credit cards). Learn more about this
+    warning net::ERR_CERT_AUTHORITY_INVALID Turn on enhanced protection to get Chrome's highest
+    level of security ==still
+
+
+    🔹 Important: Dev vs Production
+    Development (your current setup)
+    Using self-signed keystore → browser warning is normal ✅
+    You can safely click Advanced → Proceed
+    HTTPS is still working; traffic is encrypted
+
+    Production (real users)
+    Do NOT use self-signed certs
+    You must get a certificate from a trusted CA (Let’s Encrypt, DigiCert, etc.)
+    Then put it in your keystore (.p12 or .jks)
+    Browsers will not show warnings for users
+
+
+
+    Now go to ManageRealm and create a realm name fitness-oauth2
+    now you are in fitness-oauth2
+    go to clients -> create clients -> name oauth2-pkce-client  , client type OpenID Connect -> next -> PKCE method S256 -> next -> Valid redirect URIs
+                                                                                                                                    com.example.suspendapp:/oauth2redirect
+                                                                                                                                    Valid post logout redirect URIs
+                                                                                                                                    com.example.suspendapp:/logout
+    and then click save
+
+
+    now for sign up allow to user
+    go to realm setting on top bar see Login and on the User registration now user can sign up
+
+
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Meerkat.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FFFF</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/darkcalendy</item>
+        <item name="postSplashScreenTheme">@style/Theme.Meerkat</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>
