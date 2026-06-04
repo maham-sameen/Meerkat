@@ -23,9 +23,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.meerkat" />
-                  <option name="mobileSdkAppId" value="1:65613581288:android:103f66e9928e0c0622325d" />
-                  <option name="projectId" value="meerkat-c104c" />
-                  <option name="projectNumber" value="65613581288" />
+                  <option name="mobileSdkAppId" value="1:261837915584:android:089ccf3648584babccb425" />
+                  <option name="projectId" value="meerkat-3aa05" />
+                  <option name="projectNumber" value="261837915584" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

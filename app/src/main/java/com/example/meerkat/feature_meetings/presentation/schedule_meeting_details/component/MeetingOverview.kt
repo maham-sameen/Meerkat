@@ -17,7 +17,7 @@ import com.example.meerkat.ui.theme.blue400
 
 
 @Composable
-fun MeetingOverview(jointLink : String) {
+fun MeetingOverview(jointLink : String, onClickJoinLink: () -> Unit = {}) {
     Column(
         modifier = Modifier.padding(20.dp)
     ) {
@@ -32,7 +32,7 @@ fun MeetingOverview(jointLink : String) {
             eventText = jointLink,
             textColor = blue400,
             iconColor = MaterialTheme.colorScheme.onSurface.copy(0.6f),
-            onClick = {}
+            onClick = onClickJoinLink
         )
         Spacer(modifier = Modifier.height(10.dp))
         AddNewEvent(

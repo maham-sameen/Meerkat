@@ -8,7 +8,7 @@ object ConstantCalendar {
     val SCOPE_EMAIL = "email"
     val SCOPE_OPENID = "openid"
 
-    val CLIENT_ID = "65613581288-0i1j4brksce10q7vsmlbn0jooqabucoa.apps.googleusercontent.com"
+    val CLIENT_ID = "261837915584-nb66af8d6k4tjp25hb3bisiahrobcrbb.apps.googleusercontent.com"
     val CODE_VERIFIER_CHALLENGE_METHOD = "S256"
     val MESSAGE_DIGEST_ALGORITHM = "SHA-256"
 

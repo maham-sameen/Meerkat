@@ -28,14 +28,27 @@ class GetMeetingDetails(
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(eventId: Long, host: MeetingAttendee): Flow<AMeetingDetails?> {
-        Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] , eventId : $eventId , host ${host.toString()}")
+        Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] START eventId=$eventId , host=$host")
         return meetingRepo.getEventWithContactByEventId(eventId)
             .mapLatest { eventWithContact ->
-                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] , eventWithContact : ${eventWithContact.toString()}")
-                if (eventWithContact == null) return@mapLatest null
+                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] eventWithContact=$eventWithContact")
+                if (eventWithContact == null) {
+                    Timber.tag(Constants.appName).w("\uD83D\uDE97 [GetMeetingDetailsUseCase] RETURNING null because eventWithContact is null")
+                    return@mapLatest null
+                }
 
                 val event = eventWithContact.event
-                val hangoutLink = event.hangoutLink ?: return@mapLatest null
+                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] event.eventId=${event.eventId} , event.hangoutLink=${event.hangoutLink} , event.htmlLink=${event.htmlLink} , event.summary=${event.summary}")
+                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] eventWithContact.contacts.size=${eventWithContact.contacts.size}")
+                eventWithContact.contacts.forEachIndexed { i, c ->
+                    Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] contact[$i] name=${c.name} email='${c.email}' phone='${c.phoneNumber.countryCode}${c.phoneNumber.phoneNumber}' isHost=${c.isHost}")
+                }
+
+                val hangoutLink = event.hangoutLink
+                if (hangoutLink == null) {
+                    Timber.tag(Constants.appName).w("\uD83D\uDE97 [GetMeetingDetailsUseCase] RETURNING null because event.hangoutLink is null")
+                    return@mapLatest null
+                }
 
                 val (contactAttendees, meetingAttendees) = eventWithContact.contacts
                     .map { contact ->
@@ -44,23 +57,25 @@ class GetMeetingDetails(
                     }
                     .unzip()
 
-                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] , contactAttendee : $contactAttendees , meetingAttendee : $meetingAttendees ")
+                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] mapped contactAttendees.size=${contactAttendees.size} , meetingAttendees.size=${meetingAttendees.size}")
 
                 val contactAttendeesSnapshotsList = mutableStateListOf<ContactAttendee>().apply {
                     addAll(contactAttendees)
                 }
 
-                AMeetingDetails(
-                    meerkatEventLinks = getMeerkatEventLinks.generateJoinLinkPair(
-                        event.eventId,
-                        hangoutLink
-                    ),
+                val links = getMeerkatEventLinks.generateJoinLinkPair(event.eventId, hangoutLink)
+                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] links meerkat='${links.meerkatJoinLink}' google='${links.originalGoogleMeetLink}'")
+
+                val result = AMeetingDetails(
+                    meerkatEventLinks = links,
                     timeDetail = formateTimeSlotDetailed(event.toTimeSlot()),
                     meetingDescription = meetingDescription(meetingAttendees),
                     attendees = contactAttendeesSnapshotsList,
                     host = host,
                     eventId = eventId
                 )
+                Timber.tag(Constants.appName).i("\uD83D\uDE97 [GetMeetingDetailsUseCase] EMIT AMeetingDetails attendees.size=${result.attendees.size} host=${result.host.name}")
+                result
             }
     }
 }

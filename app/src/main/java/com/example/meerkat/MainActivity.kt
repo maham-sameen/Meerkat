@@ -26,7 +26,6 @@ import com.example.meerkat.core.RootNavigationGraph
 import com.example.meerkat.core.presentation.component.LoadingAnimation
 import com.example.meerkat.core.util.Graph
 import com.example.meerkat.core.util.SessionManager
-import com.example.meerkat.keycloak.auth.presentation.NavigationGraph
 import com.example.meerkat.ui.theme.MeerkatTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -44,6 +43,11 @@ val fontFamily = FontFamily(
 
 val LocalFontFamily = staticCompositionLocalOf { fontFamily }
 
+
+/**
+ * The email extension in the firestore that is below
+ * https://medium.com/firebase-tips-tricks/how-to-install-and-use-trigger-email-extension-from-firebase-f6f9763c8088
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -62,31 +66,29 @@ class MainActivity : ComponentActivity() {
             MeerkatTheme {
                 Timber.plant(Timber.DebugTree())
                 navController = rememberNavController()
-//                var isChecking by remember { mutableStateOf(true) }
-//                var isLoggedIn by remember { mutableStateOf(false) }
-//
-//                LaunchedEffect(Unit) {
-//                    isLoggedIn = sessionManager.isUserLoggedIn()
-//                    isChecking = false
-//                }
-//                if (isChecking) {
-//                    //✅ Show your custom loading screen *alone*
-//                    Box(
-//                        modifier = Modifier.fillMaxSize()
-//                            .background(MaterialTheme.colorScheme.surface),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        LoadingAnimation()
-//                    }
-//                } else {
-//                    //✅ Only render navigation graph once login check is done
-//                    RootNavigationGraph(
-//                        navController = navController,
-//                        startDestination = if (isLoggedIn) Graph.Home else Graph.Authentication
-//                    )
-//                }
+                var isChecking by remember { mutableStateOf(true) }
+                var isLoggedIn by remember { mutableStateOf(false) }
 
-                NavigationGraph(navController)
+                LaunchedEffect(Unit) {
+                    isLoggedIn = sessionManager.isUserLoggedIn()
+                    isChecking = false
+                }
+                if (isChecking) {
+                    //✅ Show your custom loading screen *alone*
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surface),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingAnimation()
+                    }
+                } else {
+                    //✅ Only render navigation graph once login check is done
+                    RootNavigationGraph(
+                        navController = navController,
+                        startDestination = if (isLoggedIn) Graph.Home else Graph.Authentication
+                    )
+                }
             }
         }
     }

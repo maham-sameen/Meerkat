@@ -1,44 +1,35 @@
 {
   "project_info": {
-    "project_number": "65613581288",
-    "project_id": "meerkat-c104c",
-    "storage_bucket": "meerkat-c104c.firebasestorage.app"
+    "project_number": "261837915584",
+    "project_id": "meerkat-3aa05",
+    "storage_bucket": "meerkat-3aa05.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:65613581288:android:103f66e9928e0c0622325d",
+        "mobilesdk_app_id": "1:261837915584:android:089ccf3648584babccb425",
         "android_client_info": {
           "package_name": "com.example.meerkat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "65613581288-s6c25tsjngf1lenatd5pnb1kb8le1b4k.apps.googleusercontent.com",
+          "client_id": "261837915584-nb66af8d6k4tjp25hb3bisiahrobcrbb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.meerkat",
             "certificate_hash": "ec398cca4deee3264e566cbddd4ce04ec1414bd5"
           }
-        },
-        {
-          "client_id": "65613581288-8qgbbu8au5erb678tatbi0osu475n6lr.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBqOjIO-nIxOJGvcSq3JpwAMcH_sdggP-M"
+          "current_key": "AIzaSyBagc5_2k92BfO3iNmbMeyUhgFcakptm1Q"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "65613581288-8qgbbu8au5erb678tatbi0osu475n6lr.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

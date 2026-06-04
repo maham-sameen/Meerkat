@@ -8,6 +8,7 @@ import com.example.meerkat.core.presentation.UIState
 import com.example.meerkat.feature_meetings.domain.use_case.GetHost
 import com.example.meerkat.feature_meetings.domain.use_case.scheduled_meetings_details.GetMeetingDetails
 import com.example.meerkat.feature_meetings.domain.util.AMeetingDetails
+import com.example.meerkat.Constants
 import com.example.meerkat.feature_meetings.domain.util.MeetingAttendee
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -45,20 +47,24 @@ class MeetingDetailsViewModel
     fun onEvent(event : ScheduleMeetingDetailsEvents){
         when(event){
             is ScheduleMeetingDetailsEvents.OnEventId -> {
+                Timber.tag(Constants.appName).i("🟢 [MeetingDetailsViewModel] OnEventId received eventId=${event.eventId}")
                 viewModelScope.launch {
                     _uiState.emit(UIState.Loading)
                     getHost().fold(
                         onSuccess = { host ->
+                            Timber.tag(Constants.appName).i("🟢 [MeetingDetailsViewModel] getHost success host=$host")
                             _host.value = host
                             getMeetingDetails(
                                 eventId = event.eventId,
                                 host = host
                             ).filterNotNull().collectLatest {
+                                Timber.tag(Constants.appName).i("🟢 [MeetingDetailsViewModel] received AMeetingDetails attendees.size=${it.attendees.size} googleLink='${it.meerkatEventLinks.originalGoogleMeetLink}'")
                                 _currentMeetingDetails.value = it
                                 _uiState.emit(UIState.Idle)
                             }
                         },
                         onFailure = {
+                            Timber.tag(Constants.appName).e("🟢 [MeetingDetailsViewModel] getHost failed: ${it.message}")
                             _uiState.emit(UIState.Error(it.message.toString()))
                         }
                     )

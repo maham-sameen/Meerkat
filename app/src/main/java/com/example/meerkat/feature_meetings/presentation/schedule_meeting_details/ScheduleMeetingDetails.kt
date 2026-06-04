@@ -8,8 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Edit
@@ -28,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.meerkat.Constants
 import com.example.meerkat.core.presentation.SessionExpiredDialog
 import com.example.meerkat.core.presentation.ShowUIState
 import com.example.meerkat.core.presentation.component.LoadingAnimation
@@ -43,6 +49,7 @@ import com.example.meerkat.ui.theme.blue400
 import kotlinx.coroutines.delay
 import androidx.core.net.toUri
 import com.example.meerkat.core.presentation.UIState
+import timber.log.Timber
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -61,6 +68,7 @@ fun ScheduleMeetingDetails(
     val host by viewModel.host.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? Activity
+    Timber.tag(Constants.appName).i("🖥️ [ScheduleMeetingDetails] recomposing currentMeetingDetails.attendees.size=${currentMeetingDetails.attendees.size} host=${host.name} googleLink='${currentMeetingDetails.meerkatEventLinks.originalGoogleMeetLink}' meerkatLink='${currentMeetingDetails.meerkatEventLinks.meerkatJoinLink}'")
     Scaffold(
         topBar = {
             MeetingDetailsTopAppBar(
@@ -74,12 +82,19 @@ fun ScheduleMeetingDetails(
         }
     ) {innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
             MeetingDetailsScreen(
                 currentMeetingDetails, host,
                 onJoinMeeting = {
-                    activity?.openUrl(currentMeetingDetails.meerkatEventLinks.originalGoogleMeetLink)
+                    val url = currentMeetingDetails.meerkatEventLinks.originalGoogleMeetLink
+                    Timber.tag(Constants.appName).i("🖥️ [ScheduleMeetingDetails] onJoinMeeting CLICK url='$url'")
+                    activity?.openUrl(url)
+                },
+                onClickJoinLink = {
+                    val url = currentMeetingDetails.meerkatEventLinks.originalGoogleMeetLink
+                    Timber.tag(Constants.appName).i("🖥️ [ScheduleMeetingDetails] onClickJoinLink (top URL row) CLICK url='$url'")
+                    activity?.openUrl(url)
                 }
             )
             if(sessionDialogState.value){
@@ -117,17 +132,24 @@ fun ScheduleMeetingDetails(
 @Composable
 fun MeetingDetailsScreen(meetingDetails: AMeetingDetails,
                          host: MeetingAttendee ,
-                         onJoinMeeting : () -> Unit
+                         onJoinMeeting : () -> Unit,
+                         onClickJoinLink : () -> Unit = {}
 ) {
+    Timber.tag(Constants.appName).i("🖥️ [MeetingDetailsScreen] composable attendees.size=${meetingDetails.attendees.size}")
     Column (
-        modifier = Modifier
+        modifier = Modifier.fillMaxSize()
     ){
-        MeetingOverview(meetingDetails.meerkatEventLinks.meerkatJoinLink)
-        HostOverview(host)
-        AttendeeListDetails(meetingDetails.attendees)
-        Spacer(modifier = Modifier.weight(1f))
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            MeetingOverview(meetingDetails.meerkatEventLinks.meerkatJoinLink, onClickJoinLink)
+            HostOverview(host)
+            AttendeeListDetails(meetingDetails.attendees)
+        }
         MeetingActionButton(
-            modifier = Modifier.padding(start = 14.dp , end = 14.dp , bottom = 30.dp),
+            modifier = Modifier.padding(10.dp ),
             btnTextOne = "Manage",
             onBtnTextOne = {},
             btnTextTwo = "Join meeting",
@@ -150,7 +172,13 @@ fun MeetingDetailsTopAppBar(
                 modifier = Modifier.size(35.dp)
             )
         },
-        title = {},
+        title = {
+            Text(
+                text = "Calendly " ,
+                fontSize = 18.sp ,
+                color = blue400
+            )
+        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface
         ) ,

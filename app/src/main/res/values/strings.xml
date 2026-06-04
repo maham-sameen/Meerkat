@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Meerkat</string>
-    <string name="web_client_id">65613581288-mtjoim43jr1km0tgve6gbem0f0qluuh1.apps.googleusercontent.com</string>
+    <string name="web_client_id">261837915584-nb66af8d6k4tjp25hb3bisiahrobcrbb.apps.googleusercontent.com</string>
 
 
-    <string name="android_client_id">65613581288-0i1j4brksce10q7vsmlbn0jooqabucoa.apps.googleusercontent.com</string>
+    <string name="android_client_id">261837915584-nb66af8d6k4tjp25hb3bisiahrobcrbb.apps.googleusercontent.com</string>
     <string name="low">Low</string>
     <string name="fair">Fair</string>
     <string name="good">Good</string>
