@@ -4,7 +4,7 @@ Meerkat is an Android scheduling app that mirrors the core Calendly experience: 
 
 ## 🎬 Demo
 
-**Full walkthrough on YouTube → https://youtu.be/7sqGZW7P23Q**
+**Full walkthrough on YouTube → https://youtu.be/Mtl5rLWHrAw
 
 ## ✨ Features
 
